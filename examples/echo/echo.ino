@@ -1,9 +1,9 @@
-#include <NeoHWSerial.h>
-
 //
 //  Example program to show how to attach to the received character
 //  interrupt with NeoHWSerial.
 //
+
+#include <NeoHWSerial.h>
 
 static volatile uint16_t ISR_count = 0;
 

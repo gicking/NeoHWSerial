@@ -104,20 +104,20 @@ NeoHWSerial::NeoHWSerial(
 void NeoHWSerial::_rx_complete_irq(void) {
 
   volatile bool saveToBuffer = true;
+  volatile unsigned char status, data;
 
   // user receive function was attached -> call it with data and status byte
-  if (_isr) {
-    unsigned char status = *_ucsra;
-    unsigned char data = *_udr;
+  if (_isr){
+    status = *_ucsra;
+    data = *_udr;
     saveToBuffer = _isr( data, status );
   }
 
   // default: save data in ring buffer
   if (saveToBuffer) {
+
+    // No Parity error, read byte and store it in the buffer if there is room
     if (bit_is_clear(*_ucsra, UPE0)) {
-      unsigned char c = *_udr;
-      // No Parity error, read byte and store it in the buffer if there is
-      // room
       rx_buffer_index_t i = (unsigned int)(_rx_buffer_head + 1) % SERIAL_RX_BUFFER_SIZE;
 
       // if we should be storing the received character into the location
@@ -125,14 +125,14 @@ void NeoHWSerial::_rx_complete_irq(void) {
       // current location of the tail), we're about to overflow the buffer
       // and so we don't write the character or advance the head.
       if (i != _rx_buffer_tail) {
-        _rx_buffer[_rx_buffer_head] = c;
+        _rx_buffer[_rx_buffer_head] = data;
         _rx_buffer_head = i;
       }
     }
-    else {
-      // Parity error, read byte but discard it
-      *_udr;
-    }
+
+    // Parity error, don't do anything (data is dropped)
+    else { }
+
   } // if saveToBuffer
 }
 

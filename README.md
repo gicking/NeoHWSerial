@@ -1,16 +1,15 @@
 The **NeoHWSerial** class is a drop-in replacement for the Arduino built-in class `HardwareSerial`. It adds the capability to handle received characters with a user-defined function *during* the RX interrupt. This can improve performance significantly by eliminating all processing associated with storing and retrieving characters in the ring buffer **and** all polling code that constantly checked for new characters: `available` and `read` are unnecessary.
 
 Note: This is a minor update of [NeoHWSerial by SlashDevin](https://github.com/SlashDevin/NeoHWSerial) for AVR. Changes:
-  - updated to Arduino IDE >=v1.5.6 library format (see [here](https://arduino.github.io/arduino-cli/latest/library-specification/))
-  - pass UART status byte to user receive function. Required e.g. for break detection in [LIN bus](https://en.wikipedia.org/wiki/Local_Interconnect_Network)
+  - updated library structure to Arduino IDE >=v1.5.6 library format (see [here](https://arduino.github.io/arduino-cli/latest/library-specification/))
+  - pass UART status byte to user receive function. Required e.g. for break detection for [LIN bus](https://en.wikipedia.org/wiki/Local_Interconnect_Network)
   - support optional storing to ring buffer after return from user routine via return value
 
 
 ### Installation
 
-1. Download the NeoHWSerial master zip file.
-2. Extract all files into a tempory working directory.
-3. Create a `NeoHWSerial` subdirectory in your `Arduino/libraries` directory.
+This library can be installed via the library manager of the Arduino IDE.
+
 
 ### Usage
 
