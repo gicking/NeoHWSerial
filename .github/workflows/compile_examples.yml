@@ -1,32 +1,27 @@
-name: Compile Examples
+name: Build Examples
 
-# The workflow will run on every push and pull request to the repository
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  compile-sketch:
+  build:
     runs-on: ubuntu-latest
 
-    # Sequence of steps / actions for CI
     steps:
+      - name: Checkout code
+        uses: actions/checkout@latest
 
-      # Makes content of this repository available to the workflow
-      - name: Checkout repository
-        # action from marketplace (see right)
-        uses: actions/checkout@v4.2.2
+      - name: Set up Arduino CLI
+        uses: arduino/setup-cli@latest
 
-      # Compile Arduino examples. See https://github.com/arduino/compile-sketches#readme
-      - name: Compile sketch
-        # action from marketplace (see right). For docu see https://github.com/marketplace/actions/compile-arduino-sketches
-        uses: arduino/compile-sketches@v1.1.2
-        # options for action
+      - name: Compile All Example Sketches
+        uses: arduino/compile-sketches@latest
         with:
-          verbose: true
-          enable-warnings-report: true
-          # Specify all bards to compile for. Get qualifier via "arduino-cli board listall" in terminal
-          fqbn: arduino:avr:mega
-          # Compile all Arduino examples
-          sketch-paths: ./examples
-          # Add required libraries (including the repo's)
-          libraries: |
-            - https://github.com/gicking/NeoHWSerial
+          board: arduino:avr:mega
+          sketch: ./examples
+          
