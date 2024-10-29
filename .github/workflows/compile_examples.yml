@@ -14,7 +14,7 @@ jobs:
         uses: arduino/setup-cli@latest
 
       - name: Compile All Example Sketches
-        uses: arduino/compile-sketches@latest
+        uses: arduino/compile-sketches@v1.1.2
         with:
           board: arduino:avr:mega
           sketch: examples
