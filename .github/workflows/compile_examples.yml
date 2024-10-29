@@ -9,13 +9,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4.2.2
-
+          
       - name: Set up Arduino CLI
-        uses: arduino/setup-cli@latest
+        uses: arduino/setup-arduino-cli@v2.0.0
 
-      - name: Compile All Example Sketches
+      - name: Compile Examples
         uses: arduino/compile-sketches@v1.1.2
         with:
           board: arduino:avr:mega
           sketch: examples
-          
+
+#      - name: Compile examples
+#        run: |
+#          arduino-cli compile --fqbn arduino:avr:mega --build-path examples --verbose
