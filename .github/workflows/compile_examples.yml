@@ -13,12 +13,12 @@ jobs:
       # Makes content of this repository available to the workflow
       - name: Checkout repository
         # action from marketplace (see right)
-        uses: actions/checkout@latest
+        uses: actions/checkout@v4.2.2
 
       # Compile Arduino examples. See https://github.com/arduino/compile-sketches#readme
       - name: Compile sketch
         # action from marketplace (see right). For docu see https://github.com/marketplace/actions/compile-arduino-sketches
-        uses: arduino/compile-sketches@latest
+        uses: arduino/compile-sketches@v1.1.2
         # options for action
         with:
           verbose: true
