@@ -26,8 +26,7 @@ jobs:
           verbose: true
           enable-warnings-report: true
           # Specify all bards to compile for. Get qualifier via "arduino-cli board listall" in terminal
-          fqbn: |
-            - "arduino:avr:mega"
+          fqbn: "arduino:avr:mega"
           # Compile all Arduino examples
           sketch-paths: |
             - ./examples
