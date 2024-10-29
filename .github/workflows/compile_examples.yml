@@ -1,12 +1,6 @@
 name: Build Examples
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on: [push, pull_request]
 
 jobs:
   build:
@@ -23,5 +17,5 @@ jobs:
         uses: arduino/compile-sketches@latest
         with:
           board: arduino:avr:mega
-          sketch: ./examples
+          sketch: examples
           
