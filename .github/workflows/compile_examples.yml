@@ -12,13 +12,14 @@ jobs:
     steps:
       # This step makes the contents of the repository available to the workflow
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
 
       # For more information: https://github.com/arduino/compile-sketches#readme
       - name: Compile sketch
-        uses: arduino/compile-sketches@v1
+        uses: arduino/compile-sketches@v1.1.2
         with:
-          # The default is to compile for the Arduino Uno board. If you want to compile for other boards, use the `fqbn` input.
+          fqbn: |
+            - arduino:avr:mega
           sketch-paths: |
             # Configure the action to search all folders under the root of the repository for sketches and compile them.
             # This is formatted as a YAML list, which makes it possible to have multiple sketch paths if needed.
