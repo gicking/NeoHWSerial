@@ -1,63 +1,52 @@
 /*
   Simple LIN 2.x master to generate frames for the LIN sniffer
   Create alternating frames of lengths 8 and 2.
+
+  Requires LIN master library from https://github.com/gicking/LIN_master_portable_Arduino
 */
 
 // include files                                                                       
-#include "LIN_master3.h"      // send LIN frames via Serial3
+#include "LIN_master_HardwareSerial.h"
 
 // pause between LIN frames
 #define LIN_PAUSE     200
 
+// setup LIN node
+LIN_Master_HardwareSerial   LIN(Serial3, "LIN_HW");             // parameter: HW-interface, name
 
+
+// call once
 void setup(void)
 {
-  // initialize LIN master (blocking operation)
-  LIN_master3.begin(19200, LIN_V2, false);
+  // open LIN interface
+  LIN.begin(19200);  
 
 } // setup()
 
 
-
+// call repeatedly
 void loop(void)
 {
-  static uint32_t lastCall = LIN_PAUSE;
-  static uint8_t  count = 0;
-  static uint8_t  Tx[8] = {0,0,0,0,0,0,0,0};    // daty bytes
-  
+  // transmit buffers
+  static uint8_t  Tx_1[8] = {0,0,0,0,0,0,0,0};    // data bytes
+  static uint8_t  Tx_2[8] = {0,0,0,0,0,0,0,0};    // data bytes
 
-  // simple LIN scheduler
-  if (millis() - lastCall > LIN_PAUSE) {
-    lastCall = millis();
+  // send frame 1 and increase Tx[0]
+  LIN.sendMasterRequestBlocking(LIN_Master::LIN_V2, 0x07, 8, Tx_1);
+  LIN.resetStateMachine();
+  LIN.resetError();
+  Tx_1[0]++;
 
-    // send frame 1
-    if (count == 0)
-    {
-      // increase frame index
-      count++;
+  // wait a bit
+  delay(LIN_PAUSE);
 
-      // send master request
-      LIN_master3.sendMasterRequest(0x07, 8, Tx);
+  // send frame 1 and increase Tx[1]
+  LIN.sendMasterRequestBlocking(LIN_Master::LIN_V2, 0x04, 2, Tx_2);
+  LIN.resetStateMachine();
+  LIN.resetError();
+  Tx_2[1]++;
 
-      // increase data_byte[0]
-      Tx[0]++;
+  // wait a bit
+  delay(LIN_PAUSE);
 
-    }
-
-    // send frame 2
-    else
-    {
-      // revert frame index
-      count = 0;
-      
-      // send master request
-      LIN_master3.sendMasterRequest(0x04, 2, Tx);
-
-      // decrease data_byte[1]
-      Tx[1]--;
-
-    }
-      
-  } // scheduler
-    
 } // loop()
