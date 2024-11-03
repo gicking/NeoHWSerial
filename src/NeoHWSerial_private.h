@@ -23,7 +23,7 @@
   Modified 31 October 2020 by Georg Icking-Konert
 */
 
-#include "wiring_private.h"
+#include <wiring_private.h>
 
 // this next line disables the entire HardwareSerial.cpp,
 // this is so I can support Attiny series and any other chip without a uart
@@ -97,43 +97,6 @@ NeoHWSerial::NeoHWSerial(
     _tx_buffer_head(0), _tx_buffer_tail(0),
     _isr(NULL)
 {
-}
-
-// Actual interrupt handlers //////////////////////////////////////////////////////////////
-
-void NeoHWSerial::_rx_complete_irq(void) {
-
-  volatile bool saveToBuffer = true;
-  volatile unsigned char status, data;
-
-  // user receive function was attached -> call it with data and status byte
-  if (_isr){
-    status = *_ucsra;
-    data = *_udr;
-    saveToBuffer = _isr( data, status );
-  }
-
-  // default: save data in ring buffer
-  if (saveToBuffer) {
-
-    // No Parity error, read byte and store it in the buffer if there is room
-    if (bit_is_clear(*_ucsra, UPE0)) {
-      rx_buffer_index_t i = (unsigned int)(_rx_buffer_head + 1) % SERIAL_RX_BUFFER_SIZE;
-
-      // if we should be storing the received character into the location
-      // just before the tail (meaning that the head would advance to the
-      // current location of the tail), we're about to overflow the buffer
-      // and so we don't write the character or advance the head.
-      if (i != _rx_buffer_tail) {
-        _rx_buffer[_rx_buffer_head] = data;
-        _rx_buffer_head = i;
-      }
-    }
-
-    // Parity error, don't do anything (data is dropped)
-    else { }
-
-  } // if saveToBuffer
 }
 
 #endif // HAVE_HWSERIAL0 || HAVE_HWSERIAL1 || HAVE_HWSERIAL2 || HAVE_HWSERIAL3

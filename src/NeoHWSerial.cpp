@@ -29,7 +29,7 @@
 #include <string.h>
 #include <inttypes.h>
 #include <util/atomic.h>
-#include "Arduino.h"
+#include <Arduino.h>
 
 #include "NeoHWSerial.h"
 #include "NeoHWSerial_private.h"
@@ -85,35 +85,6 @@ void serialEventRun(void)            // called by main() -> name fixed
 #else
   #define TX_BUFFER_ATOMIC
 #endif
-
-
-// Actual interrupt handlers //////////////////////////////////////////////////////////////
-
-void NeoHWSerial::_tx_udr_empty_irq(void) {
-
-  // If interrupts are enabled, there must be more data in the output
-  // buffer. Send the next byte
-  unsigned char c = _tx_buffer[_tx_buffer_tail];
-  _tx_buffer_tail = (_tx_buffer_tail + 1) % SERIAL_TX_BUFFER_SIZE;
-
-  *_udr = c;
-
-  // clear the TXC bit -- "can be cleared by writing a one to its bit
-  // location". This makes sure flush() won't return until the bytes
-  // actually got written. Other r/w bits are preserved, and zeroes
-  // written to the rest.
-
-#ifdef MPCM0
-  *_ucsra = ((*_ucsra) & ((1 << U2X0) | (1 << MPCM0))) | (1 << TXC0);
-#else
-  *_ucsra = ((*_ucsra) & ((1 << U2X0) | (1 << TXC0)));
-#endif
-
-  if (_tx_buffer_head == _tx_buffer_tail) {
-    // Buffer empty, so disable interrupts
-    cbi(*_ucsrb, UDRIE0);
-  }
-}
 
 
 // Public Methods //////////////////////////////////////////////////////////////

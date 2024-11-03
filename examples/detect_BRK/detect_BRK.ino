@@ -15,6 +15,14 @@
 
 
 ////////////////
+// INCLUDE MACROS
+////////////////
+
+// comment out for handling only in ISR
+//#define STORE_BUFFER
+
+
+////////////////
 // GLOBAL VARIABLES
 ////////////////
 
@@ -45,7 +53,13 @@ bool rx_handler(uint8_t byte, uint8_t status)
   NeoSerial.println();
 
   // return true -> byte is stored in Serial buffer
-	return true;
+	#if defined(STORE_BUFFER)
+    return true;
+  
+  // return false -> byte is not stored in Serial buffer
+	#else
+    return false;
+  #endif
 
 } // rx_handler()
 
@@ -81,12 +95,15 @@ void loop() {
   NeoSerial1.flush();
   
   // receive BRK via Serial2
-  c = NeoSerial2.read();
-  NeoSerial.print("loop: Rx=0x");
-  NeoSerial.print(c, HEX);
-  if (BRK)
-    NeoSerial.print(", BRK");
-  NeoSerial.println();
+  if (NeoSerial2.available())
+  {
+    c = NeoSerial2.read();
+    NeoSerial.print("loop: Rx=0x");
+    NeoSerial.print(c, HEX);
+    if (BRK)
+      NeoSerial.print(", BRK");
+    NeoSerial.println();
+  }
   BRK = false;
 
   // send SYNC via Serial1 (0x55)
@@ -95,15 +112,19 @@ void loop() {
   NeoSerial1.flush();
   
   // receive BRK via Serial2
-  c = NeoSerial2.read();
-  NeoSerial.print("loop: Rx=0x");
-  NeoSerial.print(c, HEX);
-  if (BRK)
-    NeoSerial.print(", BRK");
-  NeoSerial.println("\n");
+  if (NeoSerial2.available())
+  {
+    c = NeoSerial2.read();
+    NeoSerial.print("loop: Rx=0x");
+    NeoSerial.print(c, HEX);
+    if (BRK)
+      NeoSerial.print(", BRK");
+    NeoSerial.println();
+  }
   BRK = false;
 
   // wait some time
   delay(2000);
+  NeoSerial.println();
 
 } // loop()

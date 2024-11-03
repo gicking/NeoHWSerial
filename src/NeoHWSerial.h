@@ -27,8 +27,8 @@
 #define NeoHWSerial_h
 
 #include <inttypes.h>
-
-#include "Stream.h"
+#include <wiring_private.h>
+#include <Stream.h>
 
 // Define constants and variables for buffering incoming serial data.  We're
 // using a ring buffer (I think), in which head is the index of the location
@@ -136,9 +136,68 @@ class NeoHWSerial : public Stream
     using Print::write; // pull in write(str) and write(buf, size) from Print
     operator bool() { return true; }
 
-    // Interrupt handlers - Not intended to be called externally
-    inline void _rx_complete_irq(void);
-    inline void _tx_udr_empty_irq(void);
+    // Receive interrupt handler - Not intended to be called externally
+    inline void _rx_complete_irq(void)
+    {
+      volatile bool saveToBuffer = true;
+      volatile unsigned char status, data;
+
+      // user receive function was attached -> call it with data and status byte
+      if (_isr){
+        status = *_ucsra;
+        data = *_udr;
+        saveToBuffer = _isr( data, status );
+      }
+
+      // default: save data in ring buffer
+      if (saveToBuffer) {
+
+        // No Parity error, read byte and store it in the buffer if there is room
+        if (bit_is_clear(*_ucsra, UPE0)) {
+          rx_buffer_index_t i = (unsigned int)(_rx_buffer_head + 1) % SERIAL_RX_BUFFER_SIZE;
+
+          // if we should be storing the received character into the location
+          // just before the tail (meaning that the head would advance to the
+          // current location of the tail), we're about to overflow the buffer
+          // and so we don't write the character or advance the head.
+          if (i != _rx_buffer_tail) {
+            _rx_buffer[_rx_buffer_head] = data;
+            _rx_buffer_head = i;
+          }
+        }
+
+        // Parity error, don't do anything (data is dropped)
+        else { }
+
+      } // if saveToBuffer
+    } // _rx_complete_irq()
+
+    // Transmit interrupt handler - Not intended to be called externally
+    inline void _tx_udr_empty_irq(void)
+    {
+      // If interrupts are enabled, there must be more data in the output
+      // buffer. Send the next byte
+      unsigned char c = _tx_buffer[_tx_buffer_tail];
+      _tx_buffer_tail = (_tx_buffer_tail + 1) % SERIAL_TX_BUFFER_SIZE;
+
+      *_udr = c;
+
+      // clear the TXC bit -- "can be cleared by writing a one to its bit
+      // location". This makes sure flush() won't return until the bytes
+      // actually got written. Other r/w bits are preserved, and zeroes
+      // written to the rest.
+
+    #ifdef MPCM0
+      *_ucsra = ((*_ucsra) & ((1 << U2X0) | (1 << MPCM0))) | (1 << TXC0);
+    #else
+      *_ucsra = ((*_ucsra) & ((1 << U2X0) | (1 << TXC0)));
+    #endif
+
+      if (_tx_buffer_head == _tx_buffer_tail) {
+        // Buffer empty, so disable interrupts
+        cbi(*_ucsrb, UDRIE0);
+      }
+    } // _tx_udr_empty_irq()
 
     typedef bool (* isr_t)( uint8_t d, uint8_t s );
     //typedef bool (* isr_t)( uint8_t d=0x00, uint8_t s=0x00 );

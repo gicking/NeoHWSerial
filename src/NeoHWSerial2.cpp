@@ -24,7 +24,8 @@
   Modified 31 October 2020 by Georg Icking-Konert
 */
 
-#include "Arduino.h"
+#include <Arduino.h>
+
 #include "NeoHWSerial.h"
 #include "NeoHWSerial_private.h"
 
