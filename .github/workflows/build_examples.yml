@@ -33,7 +33,6 @@ jobs:
           fqbn: ${{ matrix.board.fqbn }}
           libraries: |
             - source-path: ./
-            - source-url: https://github.com/gicking/LIN_master_portable_Arduino.git
           sketch-paths: |
             - examples
           cli-compile-flags: |
