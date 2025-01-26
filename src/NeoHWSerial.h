@@ -21,7 +21,11 @@
   Modified 3 December 2013 by Matthijs Kooijman
   Modified 2 November 2015 by SlashDev
   Modified 31 October 2020 by Georg Icking-Konert
+  Modified 26 January 2025 by Georg Icking-Konert
 */
+
+// only compile for AVR architecture
+#if defined(ARDUINO_ARCH_AVR)
 
 #ifndef NeoHWSerial_h
 #define NeoHWSerial_h
@@ -231,3 +235,5 @@ class NeoHWSerial : public Stream
 extern void serialEventRun(void) __attribute__((weak));            // called by main() -> name fixed
 
 #endif // NeoHWSerial_h
+
+#endif // ARDUINO_ARCH_AVR

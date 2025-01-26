@@ -24,6 +24,9 @@
   Modified 31 October 2020 by Georg Icking-Konert
 */
 
+// only compile for AVR architecture
+#if defined(ARDUINO_ARCH_AVR)
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -262,3 +265,5 @@ void NeoHWSerial::attachInterrupt( isr_t fn )
 }
 
 #endif // HAVE_HWSERIAL0 || HAVE_HWSERIAL1 || HAVE_HWSERIAL2 || HAVE_HWSERIAL3
+
+#endif // ARDUINO_ARCH_AVR

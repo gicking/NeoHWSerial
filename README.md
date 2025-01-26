@@ -6,12 +6,12 @@ Note: This is a minor update of [NeoHWSerial by SlashDevin](https://github.com/S
   - support optional storing to ring buffer after return from user routine via return value
 
 
-### Installation
+## Installation
 
-This library can be installed via the library manager of the Arduino IDE.
+This library can be installed via the library manager of the Arduino IDE. Alternatively download repository and copy the folder to your Arduino library path. 
 
 
-### Usage
+## Usage
 
 To handle all received characters with your function, you must register it with the specific `NeoSerial[n]` instance:
 
@@ -49,7 +49,7 @@ The original `HardwareSerial` files were modified to include two new methods, `a
     isr_t  _isr;
 ```
 
-### NOTES
+## Notes
 
 To avoid name collisions, all `HardwareSerial` instances are prefixed with "Neo" in this replacement library.  All parts of your sketch, including other libraries, must use
 
@@ -76,3 +76,18 @@ As new Arduino IDEs are released, new versions will appear in the root of this r
 ### See Also
 
 If you are also using software serial ports, you may be interested in [NeoICSerial](https://github.com/SlashDevin/NeoICSerial) or [NeoSWSerial](https://github.com/SlashDevin/NeoSWSerial).
+
+
+----------------
+
+Revision History
+----------------
+
+**v1.6.8 (2025-01-26)**
+  - conditional compile for AVR architecture only
+
+**v1.6.7 (2024-10-25)**
+  - started revision history
+  - fixed indexing bug for ring buffer storage
+  - added CI tests via Github Actions
+  

@@ -23,6 +23,9 @@
   Modified 31 October 2020 by Georg Icking-Konert
 */
 
+// only compile for AVR architecture
+#if defined(ARDUINO_ARCH_AVR)
+
 #include <wiring_private.h>
 
 // this next line disables the entire HardwareSerial.cpp,
@@ -100,3 +103,5 @@ NeoHWSerial::NeoHWSerial(
 }
 
 #endif // HAVE_HWSERIAL0 || HAVE_HWSERIAL1 || HAVE_HWSERIAL2 || HAVE_HWSERIAL3
+
+#endif // ARDUINO_ARCH_AVR

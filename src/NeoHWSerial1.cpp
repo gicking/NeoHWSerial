@@ -24,6 +24,9 @@
   Modified 31 October 2020 by Georg Icking-Konert
 */
 
+// only compile for AVR architecture
+#if defined(ARDUINO_ARCH_AVR)
+
 #include "Arduino.h"
 #include "NeoHWSerial.h"
 #include "NeoHWSerial_private.h"
@@ -70,3 +73,5 @@
   }
 
 #endif // HAVE_HWSERIAL1
+
+#endif // ARDUINO_ARCH_AVR
