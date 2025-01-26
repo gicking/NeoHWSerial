@@ -25,7 +25,7 @@ jobs:
       matrix:
         board:
           - fqbn: arduino:avr:mega                    # Arduino Mega2560
-          artifact-name-suffix: arduino_avr_mega
+            artifact-name-suffix: arduino_avr_mega
     steps:
       - uses: actions/checkout@v4.2.2                 # check-out this repo
       - uses: arduino/compile-sketches@v1.1.2         # build Arduino examples
