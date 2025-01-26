@@ -84,7 +84,7 @@ Revision History
 ----------------
 
 **v1.6.8 (2025-01-26)**
-  - conditional compile for AVR architecture only
+  - add conditional compile for AVR architecture only
 
 **v1.6.7 (2024-10-25)**
   - fix indexing bug for ring buffer storage
