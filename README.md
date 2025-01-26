@@ -87,7 +87,11 @@ Revision History
   - conditional compile for AVR architecture only
 
 **v1.6.7 (2024-10-25)**
-  - started revision history
-  - fixed indexing bug for ring buffer storage
-  - added CI tests via Github Actions
+  - fix indexing bug for ring buffer storage
+  - add CI tests via Github Actions
   
+**v1.6.6 (2020-11-01)**
+  - fork from [NeoHWSerial by SlashDevin](https://github.com/SlashDevin/NeoHWSerial)
+  - update library structure to Arduino IDE >=v1.5.6 format (see [here](https://arduino.github.io/arduino-cli/latest/library-specification/))
+  - pass UART status byte to user receive function. Required e.g. for break detection for [LIN bus](https://en.wikipedia.org/wiki/Local_Interconnect_Network)
+  - support optional storing to ring buffer after return from user routine via return value
