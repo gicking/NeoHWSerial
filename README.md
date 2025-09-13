@@ -85,6 +85,7 @@ Revision History
 
 **v1.6.9 (2025-09-13)**
   - fix bug that corrupts buffer storage if no user function is attached to Rx-ISR
+  - add methods to disable & enable receiver
 
 **v1.6.8 (2025-01-26)**
   - add conditional compile for AVR architecture only

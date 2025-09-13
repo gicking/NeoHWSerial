@@ -139,7 +139,9 @@ class NeoHWSerial : public Stream
     inline size_t write(int n) { return write((uint8_t)n); }
     using Print::write; // pull in write(str) and write(buf, size) from Print
     operator bool() { return true; }
-
+    inline void enable_rx(void) { sbi(*_ucsrb, RXEN0); }
+    inline void disable_rx(void) { cbi(*_ucsrb, RXEN0); }
+    
     // Receive interrupt handler - Not intended to be called externally
     inline void _rx_complete_irq(void)
     {
