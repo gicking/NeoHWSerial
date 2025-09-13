@@ -143,21 +143,26 @@ class NeoHWSerial : public Stream
     // Receive interrupt handler - Not intended to be called externally
     inline void _rx_complete_irq(void)
     {
-      volatile bool saveToBuffer = true;
+      volatile bool saveToBuffer;
       volatile unsigned char status, data;
 
+      // get Rx status and data
+      status = *_ucsra;
+      data = *_udr;
+
       // user receive function was attached -> call it with data and status byte
-      if (_isr){
-        status = *_ucsra;
-        data = *_udr;
+      if (_isr)
         saveToBuffer = _isr( data, status );
-      }
+      
+      // no user routine attached -> save data in ring buffer
+      else
+        saveToBuffer = true;
 
       // default: save data in ring buffer
       if (saveToBuffer) {
 
         // No Parity error, read byte and store it in the buffer if there is room
-        if (bit_is_clear(*_ucsra, UPE0)) {
+        if (bit_is_clear(status, UPE0)) {
           rx_buffer_index_t i = (unsigned int)(_rx_buffer_head + 1) % SERIAL_RX_BUFFER_SIZE;
 
           // if we should be storing the received character into the location
@@ -170,7 +175,7 @@ class NeoHWSerial : public Stream
           }
         }
 
-        // Parity error, don't do anything (data is dropped)
+        // Parity or framing error, don't do anything (data is dropped)
         else { }
 
       } // if saveToBuffer
@@ -204,7 +209,6 @@ class NeoHWSerial : public Stream
     } // _tx_udr_empty_irq()
 
     typedef bool (* isr_t)( uint8_t d, uint8_t s );
-    //typedef bool (* isr_t)( uint8_t d=0x00, uint8_t s=0x00 );
     void attachInterrupt( isr_t fn );
     void detachInterrupt() { attachInterrupt( (isr_t) NULL ); };
 

@@ -83,6 +83,9 @@ If you are also using software serial ports, you may be interested in [NeoICSeri
 Revision History
 ----------------
 
+**v1.6.9 (2025-09-13)**
+  - fix bug that corrupts buffer storage if no user function is attached to Rx-ISR
+
 **v1.6.8 (2025-01-26)**
   - add conditional compile for AVR architecture only
 
